@@ -157,7 +157,21 @@ boolean Plugin_004(byte function, struct EventStruct * event, String& string)
 
                 Plugin_004_DallasPin = CONFIG_PIN1;
                 float value = 0;
-                String log  = F("DS   : Temperature: ");
+                String log  = F("DS   : ");
+
+                Plugin_004_DS_startConversion(addr);
+
+                log += (" (");
+                for (byte x = 0; x < 8; x++)
+                {
+                    if (x != 0)
+                        log += '-';
+                    log += String(ExtraTaskSettings.TaskDevicePluginConfigLong[x], HEX);
+                }
+                log += ')';
+                log += ':';
+
+                log += F(" Temperature: ");
 
                 if (Plugin_004_DS_readTemp(addr, &value))
                 {
@@ -170,17 +184,6 @@ boolean Plugin_004(byte function, struct EventStruct * event, String& string)
                     UserVar[event->BaseVarIndex] = NAN;
                     log += F("Error!");
                 }
-                Plugin_004_DS_startConversion(addr);
-
-                log += (" (");
-                for (byte x = 0; x < 8; x++)
-                {
-                    if (x != 0)
-                        log += '-';
-                    log += String(ExtraTaskSettings.TaskDevicePluginConfigLong[x], HEX);
-                }
-
-                log += ')';
                 addLog(LOG_LEVEL_INFO, log);
             }
             break;
