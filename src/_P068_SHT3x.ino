@@ -31,6 +31,11 @@ public:
 	void readFromSensor(void);
 	bool CRC8(uint8_t MSB, uint8_t LSB, uint8_t CRC);
 
+	uint8_t getDeviceAddr(void)
+	{
+		return _i2c_device_address;
+	}
+
 	float tmp=0;
 	float hum=0;
 
@@ -195,10 +200,24 @@ boolean Plugin_068(byte function, struct EventStruct *event, String& string)
 			sht3x->readFromSensor();
 			UserVar[event->BaseVarIndex + 0] = sht3x->tmp;
 			UserVar[event->BaseVarIndex + 1] = sht3x->hum;
-			String log = F("SHT3x: Temperature: ");
+			String log = F("SHT3x: ");
+			if( sht3x->getDeviceAddr() == 0x44 )
+			{
+				log += F("0x44: ");
+		  }
+			else
+			{
+				log += F("0x45: ");
+		  }
+			log += F("Temperature: ");
 			log += UserVar[event->BaseVarIndex + 0];
 			addLog(LOG_LEVEL_INFO, log);
-			log = F("SHT3x: Humidity: ");
+			log = F("SHT3x: ");
+			if( sht3x->getDeviceAddr() == 0x44 )
+			log += F("0x44: ");
+			else
+			log += F("0x45: ");
+			log += F("Humidity: ");
 			log += UserVar[event->BaseVarIndex + 1];
 			addLog(LOG_LEVEL_INFO, log);
 			success = true;
